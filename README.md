@@ -14,6 +14,8 @@ The advantage of running RMS in a container is that you can create a safe and st
 
 If your computer has less than 4GB of internal memory (like on the low end Raspberries), it might be wise to make sure there is ample swap space to augment the internal memory. See the chapter "Increase swap memory to 1 GB" from the mentioned manual.
 
+The remainder of the manual assumes a Debian Bookworm based system, like a Raspberry 5. The ``Dockerfile`` and ``startup.sh`` from the *podman* directory can also be used to run the container on other platforms. 
+
 
 ### Install Podman
 Most Linux distributions have packages for podman. You can install it on Debian Bookworm like this:
@@ -66,6 +68,24 @@ podman create --mount=type=bind,source=/home/podman/RMS_data/xx000a,destination=
 Now verify the container has been created with ``podman ps -a``
 
 You can start and stop the container with ``podman start xx000a`` and ``podman stop xx000a`` (under the podman account). You can access the camera data under */home/podman/RMS_data/xx000a* from any account. 
+
+### Run the container at boot
+It is possible to start the container automatically at system boot and restart it when it stops for some reason.
+
+If you are not working under the *podman* account, become *podman* first by ``sudo su - podman``. Execute the following commands to start the container at boot, again with our fictitious *xx000a* camera. Replace this with your own camera ID's.
+
+```
+mkdir -p ~/.config/systemd/user
+podman generate systemd --new --name xx000a -f
+systemctl --user daemon-reload
+systemctl --user enable container-xx000a.service
+```
+
+It might be wise to restart the container daily to automatically apply updates of the RMS software. In the *podman* account do ``crontab -e`` and add the following line:
+```
+22 12 * * * systemctl --user restart container-xx000a.service
+```
+
 
 
 
