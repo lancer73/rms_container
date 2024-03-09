@@ -9,7 +9,7 @@ fi
 # https://github.com/CroatianMeteorNetwork/cmn_binviewer
 
 apt-get update 
-apt-get install dpkg-dev build-essential libjpeg-dev libtiff-dev libsdl1.2-dev  libgstreamer-plugins-base1.0-dev libnotify-dev libglut3.12 freeglut3-dev libwebkitgtk-6.0-dev libghc-gtk3-dev python3-tk python3-numpy python3-six python3-scipy python3-pil python3-imageio python3-astropy
+apt-get install -y dpkg-dev build-essential libjpeg-dev libtiff-dev libsdl1.2-dev  libgstreamer-plugins-base1.0-dev libnotify-dev libglut3.12 freeglut3-dev libwebkitgtk-6.0-dev libghc-gtk3-dev python3-tk python3-numpy python3-six python3-scipy python3-pil python3-imageio python3-astropy
 
 if [ ! -d /usr/local/src ]
 then
