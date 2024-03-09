@@ -1,0 +1,20 @@
+--- CMN_binViewer.py.old	2024-03-09 15:01:21.000032681 +0100
++++ CMN_binViewer.py	2024-03-09 15:09:24.280875175 +0100
+@@ -79,7 +79,7 @@
+ global_bg = "Black"
+ global_fg = "Gray"
+ 
+-config_file = 'config.ini'
++config_file = os.path.expanduser('~') + '/.cmn_binviewer'
+ 
+ log_directory = 'CMN_binViewer_logs'
+ 
+@@ -4013,7 +4013,7 @@
+     else:
+         # unfrozen
+         dir_ = os.path.dirname(os.path.realpath(__file__))
+-    config_file = os.path.join(dir_, 'config.ini')
++    config_file = os.path.expanduser('~') + '/.cmn_binviewer'
+     
+ 
+     # Catch unhandled exceptions in Tkinter
