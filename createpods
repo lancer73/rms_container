@@ -28,9 +28,6 @@ then
   echo export XDG_RUNTIME_DIR=/run/user/`id -u` >> ~/.bashrc
 fi
 
-# Create empty crontab
-echo > ~/crontab
-
 cd $DOCKERDIR
 podman build . -t rms:latest
 cd ~
