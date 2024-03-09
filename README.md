@@ -126,6 +126,14 @@ podman attach [cameraname]
 
 If the container is running properly, you can start the container at boot by running the script  ``~/startatboot [cameraname]``
 
+Now reboot the system.
+
+After the system has booted you can verify everything is running properly by executing:
+```
+sudo su - podman
+systemctl --user status container-[cameraname].service
+```
+
 
 
 
