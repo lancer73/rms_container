@@ -96,8 +96,8 @@ sudo sh -c "echo podman > /etc/cron.allow"
 Fine, 
 
 ```
-apt update && apt upgrade -y && apt install git
 sudo su -
+apt update && apt upgrade -y && apt install git
 git clone https://github.com/lancer73/rms_container
 cd rms_container
 chmod 755 install
