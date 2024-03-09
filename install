@@ -2,7 +2,7 @@
 
 apt-get update
 apt-get upgrade -y
-apt-get install podman podman-toolbox podman-compose podman-docker
+apt-get install -y podman podman-toolbox podman-compose podman-docker
 
 if [ $# -lt 1  ]
 then
@@ -11,7 +11,7 @@ then
 fi
 
 getent passwd $1 > /dev/null
-if [ $? -eq 0  ]
+if [ $? -ne 0  ]
 then
   echo Creating user $1 the Pods will run under this username
   useradd -m $1
@@ -28,12 +28,14 @@ cp -r podman /home/$1
 if [ ! -d /home/$1/RMS_data/baseconfig ]
 then
   mkdir -p /home/$1/RMS_data/baseconfig
-  cp RMS_data/baseconfig/* /home/$1/RMS_data/baseconfig
+  cp RMS_data/baseconfig/.config /home/$1/RMS_data/baseconfig
 fi
-chown -R $1 /home/$1
+chown -R $1:$1 /home/$1
 chmod 700 /home/$1/createpods
 chmod 700 /home/$1/podcontrol
 chmod 700 /home/$1/startatboot
+chmod 700 install_cmn_binviewer
+chmod 700 install_skyfit2
 
 sudo su - $1 -c "./createpods"
 
