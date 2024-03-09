@@ -85,6 +85,10 @@ It might be wise to restart the container daily to automatically apply updates o
 ```
 22 12 * * * systemctl --user restart container-xx000a.service
 ```
+And make sure *podman* is allowed to have cron jobs by adding *podman* to ``/etc/cron.allow``. You can do this as your regular user by executing:
+```
+sudo sh -c "echo podman > /etc/cron.allow"
+```
 
 
 
