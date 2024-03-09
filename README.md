@@ -83,12 +83,35 @@ systemctl --user enable container-xx000a.service
 
 It might be wise to restart the container daily to automatically apply updates of the RMS software. In the *podman* account do ``crontab -e`` and add the following line:
 ```
-22 12 * * * systemctl --user restart container-xx000a.service
+22 12 * * * podman stop xx000a
 ```
+Which stops the container daily at 12:22. Systemd will then detect the container as crashed and will automatically restart.
+
 And make sure *podman* is allowed to have cron jobs by adding *podman* to ``/etc/cron.allow``. You can do this as your regular user by executing:
 ```
 sudo sh -c "echo podman > /etc/cron.allow"
 ```
+
+## Give me an easier way
+Fine, 
+
+```
+apt update && apt upgrade -y && apt install git
+sudo su -
+git clone https://github.com/lancer73/rms_container
+cd rms_container
+chmod 755 install
+./install podman
+```
+And follow the instructions.
+Afterwards communicate ``/home/podman/RMS_data/baseconfig/.ssh/id_rsa.pub to the said mail address and edit your configurations in ``/home/podman/RMS_data/[stationname]/config`` and reboot.
+
+The scripts will also create the following commands:
+1) cmn_binviewer
+2) skyfit2_[cameraname]
+3) cameracontrol_[cameraname]
+4) showlivestream_[cameraname]
+For all users in the system. You can start these commands from the command prompt.
 
 
 
