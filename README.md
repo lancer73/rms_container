@@ -104,7 +104,7 @@ chmod 755 install
 ./install podman
 ```
 And follow the instructions.
-Afterwards communicate ``/home/podman/RMS_data/baseconfig/.ssh/id_rsa.pub to the said mail address and edit your configurations in ``/home/podman/RMS_data/[stationname]/config`` and reboot.
+Afterwards communicate ``/home/podman/RMS_data/baseconfig/.ssh/id_rsa.pub`` to the said mail address and edit your configurations in ``/home/podman/RMS_data/[stationname]/config`` and reboot.
 
 The scripts will also create the following commands:
 1) cmn_binviewer
