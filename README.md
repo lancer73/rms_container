@@ -104,7 +104,8 @@ chmod 755 install
 ./install podman
 ```
 And follow the instructions.
-Afterwards communicate ``/home/podman/RMS_data/baseconfig/.ssh/id_rsa.pub`` to the said mail address and edit your configurations in ``/home/podman/RMS_data/[stationname]/config`` and reboot.
+Afterwards communicate ``/home/podman/RMS_data/baseconfig/.ssh/id_rsa.pub`` to the said mail address and edit your configurations in ``/home/podman/RMS_data/[stationname]/config``.
+If you need to edit the configuration, or start and/or stop the containers become user *podman* first (``sudo su - podman``)
 
 The scripts will also create the following commands:
 1) cmn_binviewer
@@ -112,6 +113,18 @@ The scripts will also create the following commands:
 3) cameracontrol_[cameraname]
 4) showlivestream_[cameraname]
 For all users in the system. You can start these commands from the command prompt.
+
+When your camera configurations are correct, start the container with:
+```
+podman start [cameraname]
+```
+
+You can view the start output by issuing (and exit with the ctrl-p ctrl-q keycombos:
+```
+podman attach [cameraname]
+```
+
+If the container is running properly, you can start the container at boot by running the script  ``~/startatboot [cameraname]``
 
 
 
