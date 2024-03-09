@@ -1,0 +1,95 @@
+#!/bin/bash
+DOCKERDIR=~/podman
+RMSDIR=~/RMS_data
+RMSEMAIL="denis.vida@gmail.com"
+
+echo "
+CREATING YOUR RMS PODS
+Each camera will run it its own pod with its own data directory under 
+/home/podman/RMS_data/[cameraname]
+The config of each camera can be edited afterwards and can be found under
+/home/podman/RMS_data/[cameraname]/config
+Just stop and start the pods to activate the new config.
+To continue with this script you need:
+1) Longitude and latitude of your station
+2) Cameranames for RMS and optionally CAMS
+3) The URL for your camera's
+
+The first step is building the master image for RMS. This will take a
+few minutes and depends on your hardware.
+"
+
+read -p "Press ENTER to continue"
+
+# Set this environment variable to enable systemctl
+if [ -z $XDG_RUNTIME_DIR ]
+then
+  export XDG_RUNTIME_DIR=/run/user/`id -u`
+  echo export XDG_RUNTIME_DIR=/run/user/`id -u` >> ~/.bashrc
+fi
+
+# Create empty crontab
+echo > ~/crontab
+
+cd $DOCKERDIR
+podman build . -t rms:latest
+cd ~
+mkdir ${RMSDIR}/baseconfig/.ssh
+chmod 700 ${RMSDIR}/baseconfig/.ssh
+
+echo That took a while. On to configuring your cameras
+
+read -n1 -r -p "Press ENTER to generate the SSH key (recommended), or Q to skip this step..." key
+
+if [[ "$key" = "" ]]; then
+  echo ""
+  echo "Generating a new SSH key..."
+
+  # Generate an SSH key without a passphrase
+  yes y | ssh-keygen -t rsa -m PEM -N "" -f $RMSDIR/baseconfig/.ssh/id_rsa >/dev/null
+
+  echo ""
+  echo "A file called id_rsa.pub is present in ${RMSDIR}/baseconfig/.ssh,"
+  echo "please send this file to Denis Vida ($RMSEMAIL) before continuing!"
+
+  read -p "Press ENTER to continue"
+fi
+
+
+echo
+read -p "What is the latitude of your cameras?: " LATITUDE
+echo
+read -p "What is the longitude of your cameras?: " LONGITUDE
+echo
+read -p "What is the elevation of your cameras?: " ELEVATION
+
+# Create the camera containers
+ANOTHERONE=1
+while [ $ANOTHERONE -eq 1 ]
+do
+  echo
+  read -p "What is the RMS name of your camera? : " CAMERA
+
+  mkdir ${RMSDIR}/${CAMERA}
+  mkdir ${RMSDIR}/${CAMERA}/config
+
+  cp -pr ${RMSDIR}/baseconfig/.ssh ${RMSDIR}/${CAMERA}/config
+  cat ${RMSDIR}/baseconfig/.config | sed s/STATIONNAME/${CAMERA}/g | sed s/LATITUDE/${LATITUDE}/g | sed s/LONGITUDE/${LONGITUDE}/g | sed s/ELEVATION/${ELEVATION}/g > ${RMSDIR}/${CAMERA}/config/.config
+
+  echo
+  echo Creating the pod
+  podman create --mount=type=bind,source=${RMSDIR}/${CAMERA},destination=/RMS_data --name=${CAMERA} rms:latest
+
+  echo "
+  Do not forget to add your mask and platepar files to ${RMSDIR}/${CAMERA}/config
+  and to update your .config file there, or the pod will not start
+
+  "
+    
+  read -n1 -r -p "Press 1 to enter another camera or any key" KEY
+
+  if [ "$KEY" != "1" ]
+  then
+    ANOTHERONE=0
+  fi
+done
