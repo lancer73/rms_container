@@ -1,0 +1,20 @@
+#!/bin/bash
+if [ $# -eq 0 ]
+then
+  echo Usage: startatboot [cameraname]
+fi
+
+
+# Enable starting of pods at boot
+mkdir -p ~/.config/systemd/user
+cd ~/.config/systemd/user
+podman generate systemd --new --name $1 -f
+systemctl --user daemon-reload
+systemctl --user enable container-$1.service
+
+cd ~
+crontab -l > crontab
+# Add restart to cron
+echo 22 12 \* \* \* podman stop $1 >> ~/crontab
+crontab crontab
+rm crontab
