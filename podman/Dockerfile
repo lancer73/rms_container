@@ -6,6 +6,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # Put files into place
 COPY startup.sh /startup.sh
+RUN chmod 755 /startup.sh
 RUN mkdir /source /RMS_data /Desktop
 RUN echo 1 > /.rmsautorunflag
 
