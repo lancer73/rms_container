@@ -1,0 +1,43 @@
+#!/bin/bash
+
+apt-get update
+apt-get upgrade -y
+apt-get install podman podman-toolbox podman-compose podman-docker
+
+if [ $# -lt 1  ]
+then
+  echo Usage: Install [username pods]
+  exit 0
+fi
+
+getent passwd $1 > /dev/null
+if [ $? -eq 0  ]
+then
+  echo Creating user $1 the Pods will run under this username
+  useradd -m $1
+  passwd -l $1
+fi
+loginctl enable-linger $1
+echo podman > /etc/cron.allow
+
+# Installing the pods
+cp createpods /home/$1
+cp podcontrol /home/$1
+cp startatboot /home/$1
+cp -r podman /home/$1
+if [ ! -d /home/$1/RMS_data/baseconfig ]
+then
+  mkdir -p /home/$1/RMS_data/baseconfig
+  cp RMS_data/baseconfig/* /home/$1/RMS_data/baseconfig
+fi
+chown -R $1 /home/$1
+chmod 700 /home/$1/createpods
+chmod 700 /home/$1/podcontrol
+chmod 700 /home/$1/startatboot
+
+sudo su - $1 -c "./createpods"
+
+./install_cmn_binviewer
+./install_skyfit2 $1
+
+
