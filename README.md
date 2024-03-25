@@ -119,7 +119,7 @@ When your camera configurations are correct, start the container with:
 podman start [cameraname]
 ```
 
-You can view the start output by issuing (and exit with the ctrl-p ctrl-q keycombos:
+You can view the start output by issuing (and exit with the ctrl-p ctrl-q keycombos):
 ```
 podman attach [cameraname]
 ```
