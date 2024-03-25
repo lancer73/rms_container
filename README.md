@@ -6,7 +6,7 @@
 
 There are several good ways to get a Global Meteor Network RMS camera running. Those are documented at https://globalmeteornetwork.org/wiki/index.php?title=Advanced_RMS_installations_and_Multi-camera_support
 
-If you are have never worked with a command prompt, that is probably the best option. But if you have some hwardware bought, or lying arond that doesn't meet the prerequisistes named in those manuals, this might provide a solution.
+If you are have never worked with a command prompt, that is probably the best option. But if you have some hardware bought, or lying arond that doesn't meet the prerequisistes named in those manuals, this might provide a solution.
 
 A container resembles a virtual system. It run's its own copy of an operating system, where you can install the software. There are several container platforms out there. This method will be using Podman (https://podman-desktop.io). Most modern Linux distributions come with Podman and Podman can also be installed on Windows and MacOS systems. This means that alle these platforms can be used to run the RMS software.
 
