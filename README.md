@@ -62,7 +62,7 @@ This *config* directory needs to hold:
 
 When the *config* directory has been created we can finally create and run the container:
 ```
-podman create --mount=type=bind,source=/home/podman/RMS_data/xx000a,destination=/RMS_data --name=xx000a rms:latest
+podman create --mount type=bind,source=/home/podman/RMS_data/xx000a,destination=/RMS_data --name=xx000a rms:latest
 ```
 
 Now verify the container has been created with ``podman ps -a``
