@@ -133,8 +133,16 @@ After the system has booted you can verify everything is running properly by exe
 sudo su - podman
 systemctl --user status container-[cameraname].service
 ```
+### Update the container
+Download any changes from the podman directory (Dockerfile and/or startup.sh) into the local podman directory of the user under which the containers are running.
 
-
+Change into the podman directory and:
+```
+podman build . -t rms/latest
+systemctl --user stop container-[cameraname]
+podman image prune -f
+systemctl --user start container-[cameraname]
+```
 
 
  
