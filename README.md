@@ -22,17 +22,17 @@ Most Linux distributions have packages for podman. You can install it on Debian 
 ```
 sudo apt-get update
 sudo apt-get upgrade -y
-apt-get install podman podman-toolbox podman-compose podman-docker
+sudo apt-get install podman podman-toolbox podman-compose podman-docker
 ```
 
 Packages on other Linux platforms will be named similarly, or you canget the podman software here: https://podman-desktop.io
 
 You might want to consider running the pods as a different user from your normal user account. This prevents accidents and make sure the containers keep running and that the data will not be compromised. If you want to run the container under a different user, on Linux do:
 ```
-useradd -m podman
-passwd -l podman
-loginctl enable-linger podman
-echo export XDG_RUNTIME_DIR=/run/user/`id -u podman` >> ~podman/.bashrc
+sudo useradd -m podman
+sudo passwd -l podman
+sudo loginctl enable-linger podman
+sudo echo export XDG_RUNTIME_DIR=/run/user/`id -u podman` >> ~podman/.bashrc
 ```
 The last command locks the *podman* account, so there is no remote access to it. If yoo want to access the podman account, login with your regular user and do ``sudo su - podman`` to work under the *podman* account.
 
