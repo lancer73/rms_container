@@ -78,7 +78,7 @@ If you are not working under the *podman* account, become *podman* first by ``su
 mkdir -p ~/.config/systemd/user
 podman generate systemd --new --name xx000a -f
 systemctl --user daemon-reload
-systemctl --user enable container-xx000a.service
+systemctl --user enable container-xx000a
 ```
 
 It might be wise to restart the container daily to automatically apply updates of the RMS software. In the *podman* account do ``crontab -e`` and add the following line:
@@ -131,7 +131,7 @@ Now reboot the system.
 After the system has booted you can verify everything is running properly by executing:
 ```
 sudo su - podman
-systemctl --user status container-[cameraname].service
+systemctl --user status container-[cameraname]
 ```
 ### Update the container
 Download any changes from the podman directory (Dockerfile and/or startup.sh) into the local podman directory of the user under which the containers are running.
