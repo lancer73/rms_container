@@ -52,6 +52,14 @@ sudo chmod u+x /home/podman/RMS_data/*_rms
 sudo chmod u+x /home/podman/RMS_data/startatboot
 ```
 
+When the containers are running all data will be stored in the "RMS_data" directory and can be read by your normal user, but not modified safeguarding the data. The only files that can be edited by the normal user are the base configuration files (we'll get to that later).
+
+If you want to work under the "podman" account you can do so by issuing the following command:
+```
+sudo su - podman
+```
+and you can exit to your normal user by issuing the command ``exit``.
+
 All the commands from this paragraph can also be executed by running the ``install`` script that was downloaded:
 ```
 cd rms_container
