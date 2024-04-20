@@ -17,135 +17,182 @@ If your computer has less than 4GB of internal memory (like on the low end Raspb
 The remainder of the manual assumes a Debian Bookworm based system, like a Raspberry 5. The ``Dockerfile`` and ``startup.sh`` from the *podman* directory can also be used to run the container on other platforms. 
 
 
-### Install Podman
-Most Linux distributions have packages for podman. You can install it on Debian Bookworm like this:
+### Preparing your environment
+Before we start installing camera software your system needs to be prepared To start with, the system needs the Podman software. If you are running Windows or MacOS, get the software at https://podman-desktop.io. If you are running debian based Linux, like on a Raspberry Pi you can install podman as follows:
 ```
 sudo apt-get update
 sudo apt-get upgrade -y
 sudo apt-get install podman podman-toolbox podman-compose podman-docker
 ```
 
-Packages on other Linux platforms will be named similarly, or you canget the podman software here: https://podman-desktop.io
+Now download the files from this GitHub repository into your home directory. You can do this with the command:
+```
+git clone https://github.com/lancer73/rms_container
+```
 
-You might want to consider running the pods as a different user from your normal user account. This prevents accidents and make sure the containers keep running and that the data will not be compromised. If you want to run the container under a different user, on Linux do:
+The next step is to create a user under which the container should run. This is not a prerequisite, but it is a wise thing to do. Running it under a separate user will provide more stability since there is less chance of running wrong commands by accident or removing critical configuration files. When you are using Linux add that user in the following way (we are using "podman" for the user name, but this could also be something else):
 ```
 sudo useradd -m podman
 sudo passwd -l podman
 sudo loginctl enable-linger podman
-sudo echo export XDG_RUNTIME_DIR=/run/user/`id -u podman` >> ~podman/.bashrc
-```
-The last command locks the *podman* account, so there is no remote access to it. If yoo want to access the podman account, login with your regular user and do ``sudo su - podman`` to work under the *podman* account.
-
-### Install the container
-To run the container, we first need to build the container image. Then we can create as many containers from the image as we like. 
-
-Create a separate directory under the account you will be using to run the containers and download the Dockerfile and startup.sh from this repository.
-```
-sudo su - podman
-git clone https://github.com/lancer73/rms_container
-cd rms_container/podman
-podman build . -t rms:latest
+sudo su - podman "echo export XDG_RUNTIME_DIR=/run/user/`id -u` >> ~podman/.bashrc"
+sudo echo podman >> /etc/cron.allow
 ```
 
-This will take a while. You can confirm your image exists with ``podman images``. For this to work you need to be in the *podman* account.
+With the ``passwd -l`` command the podman account is locked, so there is no external access to it. The other commands are making sure that containers keep running when you logout and to enable timed jobs.
 
-To be able to access RMS data and configuration, we keep those outside of the container. For instance in the directory ~/RMS_data. Each camera needs its own container. In the following example our fictitios RMS camera has id *xx000a*. You can substitute whis with your own camera id. If you have more than one camera, repeat these instructions for each. Note, as we didn't exit the podman account after the previous instructions ``sodu su - podman`` is omitted from the codeblock below.
+If you want to access the podman account, login with your regular user and do ``sudo su - podman`` to work under the *podman* account.
 
+The last step is to copy the nescessary files into the user directory which will be running the containers. All the files that are needed are located in the RMS_data directory. This directory was downloadd from the Github repository earlier. You can move it to the proper account like this (replace "podman" with your user if nescessary):
 ```
-mkdir -p /RMS_data/xx000a/config
-```
-This *config* directory needs to hold:
-1) .config
-2) .ssh
-3) platepar_cmn2010.cal
-4) mask.bmp
-
-When the *config* directory has been created we can finally create and run the container:
-```
-podman create --mount=type=bind,source=/home/podman/RMS_data/xx000a,destination=/RMS_data --name=xx000a rms:latest
-```
-
-Now verify the container has been created with ``podman ps -a``
-
-You can start and stop the container with ``podman start xx000a`` and ``podman stop xx000a`` (under the podman account). You can access the camera data under */home/podman/RMS_data/xx000a* from any account. 
-
-### Run the container at boot
-It is possible to start the container automatically at system boot and restart it when it stops for some reason.
-
-If you are not working under the *podman* account, become *podman* first by ``sudo su - podman``. Execute the following commands to start the container at boot, again with our fictitious *xx000a* camera. Replace this with your own camera ID's.
-
-```
-mkdir -p ~/.config/systemd/user
-podman generate systemd --new --name xx000a -f
-systemctl --user daemon-reload
-systemctl --user enable container-xx000a
-```
-
-It might be wise to restart the container daily to automatically apply updates of the RMS software. In the *podman* account do ``crontab -e`` and add the following line:
-```
-22 12 * * * podman stop xx000a
-```
-Which stops the container daily at 12:22. Systemd will then detect the container as crashed and will automatically restart.
-
-And make sure *podman* is allowed to have cron jobs by adding *podman* to ``/etc/cron.allow``. You can do this as your regular user by executing:
-```
-sudo sh -c "echo podman > /etc/cron.allow"
-```
-
-## Give me an easier way
-Fine, 
-
-```
-sudo su -
-apt update && apt upgrade -y && apt install git
-git clone https://github.com/lancer73/rms_container
 cd rms_container
-chmod 755 install
-./install podman
-```
-And follow the instructions.
-Afterwards communicate ``/home/podman/RMS_data/baseconfig/.ssh/id_rsa.pub`` to the said mail address and edit your configurations in ``/home/podman/RMS_data/[stationname]/config``.
-If you need to edit the configuration, or start and/or stop the containers become user *podman* first (``sudo su - podman``)
-
-The scripts will also create the following commands:
-1) cmn_binviewer
-2) skyfit2_[cameraname]
-3) cameracontrol_[cameraname]
-4) showlivestream_[cameraname]
-For all users in the system. You can start these commands from the command prompt.
-
-When your camera configurations are correct, start the container with:
-```
-podman start [cameraname]
+sudo cp -r RMS_data /home/podman
+sudo chown -R podman:podman /home/podman/RMS_data
+sudo chmod u+x /home/podman/RMS_data/*_rms
 ```
 
-You can view the start output by issuing (and exit with the ctrl-p ctrl-q keycombos):
+All the commands from this paragraph can also be executed by running the ``install`` script that was downloaded:
 ```
-podman attach [cameraname]
+cd rms_container
+sudo ./install podman
 ```
 
-If the container is running properly, you can start the container at boot by running the script  ``~/startatboot [cameraname]``
+### Prepare camera configuration
+Each camera needs it own configuration files. These are all created in the RMS_data directory of our podman user. The first step is to determine your location and the height of your camera above sea level. Note these details down somewhere. The next step is to generate a SSH key that will be used for uloading your results.
 
-Now reboot the system.
-
-After the system has booted you can verify everything is running properly by executing:
+You can generate the SSH key with the following commands:
 ```
 sudo su - podman
-systemctl --user status container-[cameraname]
+mkdir RMS_data/baseconfig/.ssh
+chmod 700 RMS_data/baseconfig/.ssh
+ssh-keygen -t rsa -m PEM -N "" -f RMS_data/baseconfig/.ssh/id_rsa
+exit
 ```
-### Update the container
-Download any changes from the podman directory (Dockerfile and/or startup.sh) into the local podman directory of the user under which the containers are running.
+If you have your camera's already running, copy your .ssh directory from the old installation into the ``RMS_data/baseconfig`` directory of the podman user.
 
-Change into the podman directory and:
+If you just generated your SSH key, send the id_rsa.pub file from the ``RMS_data/baseconfig/.ssh`` directory to Denis Vida. Like the instructions on this page https://globalmeteornetwork.org/wiki/index.php?title=The_last_steps under the "Obtaining the station code" paragraph. Include the location in the mail and the number of camera's you will be running. You will receive your station codes in return.
+
+When you have your station codes the camera configurations can be created. For each station do (replace STATIONID with your station id's):
 ```
-podman build . -t rms/latest
-systemctl --user stop container-[cameraname]
-podman image prune -f
-systemctl --user start container-[cameraname]
+sudo su - podman
+cd RMS_data
+mkdir STATIONID
+mkdir STATIONID/config
+cp -pr baseconfig/.ssh STATIONID/config
+cp -pr baseconfig/.config STATIONID/config
+chmod g+w baseconfig/docker-compose.yml
+chmog g+w baseconfig/STATIONID/config/.config
+exit
 ```
 
+Now edit each config file to set the proper parameters. Set the location, the station id and your camera URL (you can determine your camera URL with the instructions on this page: https://globalmeteornetwork.org/wiki/index.php?title=Focusing_a_camera_and_the_first_tests). After the first night of operation you can determine your ``mask.bmp`` and ``platepar_cmn2010.cal`` files and copy them to the ``RMS_data/STATIONID/config`` directory and restart the container to activate the config (or wait for the automtic container reboot during the day). You can use your favourite graphical text editor to edit the configuration files if needed. If you want to use your graphical editor add yourself to the "podman" group first by doing ``usermod -a -G podman [yourusername]``. Then logout and login again to activate this configuration.
 
- 
+The last step in the camera configuration is to prepare the configuration of the containers itself. To do this, modify the file ``RMS_data/baseconfig/docker-compose.yml``. If you have one camera with a station id of xx001d, then your docker-compose.yml should look like this (if you are using the user "podman"):
+```
+services:
+  xx001d:
+    image: docker.io/lancer73/rms
+    container_name: xx001d
+    hostname: xx001d
+    restart: unless-stopped
+    volumes:
+      - type: bind
+        source: /home/podman/RMS_data/xx001d
+        target: /RMS_data
+```
 
+If you have two camera's xx001d and xx001e it should be:
+```
+services:
+  xx001d:
+    image: docker.io/lancer73/rms
+    container_name: xx001d
+    hostname: xx001d
+    restart: unless-stopped
+    volumes:
+      - type: bind
+        source: /home/podman/RMS_data/xx001d
+        target: /RMS_data
+  xx001e:
+    image: docker.io/lancer73/rms
+    container_name: xx001e
+    hostname: xx001e
+    restart: unless-stopped
+    volumes:
+      - type: bind
+        source: /home/podman/RMS_data/xx001e
+        target: /RMS_data
+```
 
+### Running the containers
+The last step is running the containers. To do this:
+```
+sudo su - podman
+cd RMS_data/baseconfig
+podman-compose up -d
+exit
+```
 
+If you want to stop the containers:
+```
+sudo su - podman
+cd RMS_data/baseconfig
+podman-compose down
+exit
+```
+
+If you want to see if the containers are running:
+```
+sudo su - podman -c "podman ps"
+```
+You should see a line for each station (camera).
+
+If you want to see the live output of the container for station xx001d, then do:
+```
+sudo su - podman -c "podman logs -f xx001d"
+```
+You can close the output with ctrl-c
+
+### Start the containers at boot
+To start the containers at boot, do:
+```
+sudo su - podman
+cd ~/RMS_data
+bash startatboot
+exit
+```
+
+This will create a systemctl script for each station (camera) and start it at boot. At 12:22 each day each container will be restarted to pull in the latest RMS updates. Individual containers can be started and stopped with ``sudo su - podman -c "systemctl --user start container-xx001d"`` and ``sudo su - podman -c "systemctl --user stop container-xx001d"``
+
+You can also start stop and update all containers with the scripts ``start_rms``, ``stop_rms`` and ``update_rms`` in the ``RMS_data`` directory.
+
+Use the scripts like:
+```
+sudo su - podman -c "./RMS_data/update_rms"
+```
+
+### Addon utilities
+There are a couple of utilities which might be good to have. Those are:
+1) cmn_binviewer, for viewing the captured files
+2) Skyfit2, to create the platepar files and to use in orbit calculations
+3) cameracontrol, to set camera settings from your Raspberry
+4) showlivestream, to have a live view of the camera image
+
+Scripts are provided to install those tools for all users.
+
+#### Install cmn_binviewer
+```
+cd ~/rms_container
+sudo ./install_cmn_binviewer
+```
+
+#### Install Skyfit2, cmaeracontrol and showlivestream
+```
+cd ~/rms_container
+sudo ./install_skyfit2
+```
+
+After running the script the following commands are available for all users:
+1) skyfit2_[stationid]
+2) cameracontrol_[stationid]
+3) showlivestream_[stationid]
