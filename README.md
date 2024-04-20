@@ -49,6 +49,7 @@ cd rms_container
 sudo cp -r RMS_data /home/podman
 sudo chown -R podman:podman /home/podman/RMS_data
 sudo chmod u+x /home/podman/RMS_data/*_rms
+sudo chmod u+x /home/podman/RMS_data/startatboot
 ```
 
 All the commands from this paragraph can also be executed by running the ``install`` script that was downloaded:
@@ -85,7 +86,11 @@ chmog g+w baseconfig/STATIONID/config/.config
 exit
 ```
 
-Now edit each config file to set the proper parameters. Set the location, the station id and your camera URL (you can determine your camera URL with the instructions on this page: https://globalmeteornetwork.org/wiki/index.php?title=Focusing_a_camera_and_the_first_tests). After the first night of operation you can determine your ``mask.bmp`` and ``platepar_cmn2010.cal`` files and copy them to the ``RMS_data/STATIONID/config`` directory and restart the container to activate the config (or wait for the automtic container reboot during the day). You can use your favourite graphical text editor to edit the configuration files if needed. If you want to use your graphical editor add yourself to the "podman" group first by doing ``usermod -a -G podman [yourusername]``. Then logout and login again to activate this configuration.
+Now edit each config file to set the proper parameters. Set the location, the station id and your camera URL (you can determine your camera URL with the instructions on this page: https://globalmeteornetwork.org/wiki/index.php?title=Focusing_a_camera_and_the_first_tests). 
+
+After the first night of operation you can determine your ``mask.bmp`` and ``platepar_cmn2010.cal`` files and copy them to the ``RMS_data/STATIONID/config`` directory and restart the container to activate the config (or wait for the automtic container reboot during the day). You can use your favourite graphical text editor to edit the configuration files if needed.
+
+If you want to use your graphical editor add yourself to the "podman" group first by doing ``usermod -a -G podman [yourusername]``. Then logout and login again to activate this configuration.
 
 The last step in the camera configuration is to prepare the configuration of the containers itself. To do this, modify the file ``RMS_data/baseconfig/docker-compose.yml``. If you have one camera with a station id of xx001d, then your docker-compose.yml should look like this (if you are using the user "podman"):
 ```
@@ -158,7 +163,7 @@ To start the containers at boot, do:
 ```
 sudo su - podman
 cd ~/RMS_data
-bash startatboot
+./startatboot
 exit
 ```
 
