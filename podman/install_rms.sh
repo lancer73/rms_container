@@ -18,7 +18,7 @@ echo 1 > /.rmsautorunflag
 virtualenv --system-site-packages /vRMS 
 source /vRMS/bin/activate
 pip install asdf-unit-schemas
-pip install numpy==1.23.5
+pip install numpy==1.26.4
 pip install pyephem
 pip install imreg_dft
 pip install configparser==4.0.2
@@ -28,6 +28,7 @@ pip install python-dvr
 pip install rawpy
 pip install pycairo
 pip install pygobject
+pip install tflite_runtime
 
 # Install RMS
 # Download the RMS sources
