@@ -35,7 +35,7 @@ The next step is to create a user under which the container should run. This is 
 sudo useradd -m podman
 sudo passwd -l podman
 sudo loginctl enable-linger podman
-sudo su - podman "echo export XDG_RUNTIME_DIR=/run/user/`id -u` >> ~podman/.bashrc"
+sudo su - podman -c "echo export XDG_RUNTIME_DIR=/run/user/`id -u` >> ~podman/.bashrc"
 sudo echo podman >> /etc/cron.allow
 ```
 
