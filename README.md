@@ -1,6 +1,9 @@
 # Run Global Meteor Network RMS software in a container
 
 ## Run RMS on any system
+*NOTE:* Container images must be kept small. The RMS container images is not there yet. The compressed image size is currently around 1GB and uncompressed around 2.7GB. Use this installation methon only when your RMS station has a good Internet connection and if your RMS station has at least the storage performance of a USB3 SSD connected to a Raspberry Pi 4.
+
+*NOTE:* The current pre-built image is only for ARM64 (Raspberry Pi 4/5). You can rebuild the image yoursef by issuing a ``podman build . -t rms:latest`` and modify the docker-compose.yml file accordingly.
 
 ### Introduction
 
