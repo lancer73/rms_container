@@ -1,6 +1,6 @@
 MAINTAINER roel@gloudemans.info
 
-FROM python:bookworm
+FROM debian:bookworm
 ENV DEBIAN_FRONTEND=noninteractive
 ENV HOME /
 
@@ -9,14 +9,15 @@ COPY install_rms.sh /install_rms.sh
 
 RUN chmod 755 /startup.sh && \
     chmod 755 /install_rms.sh && \
-    mkdir /source && \
-    cd /source && \
-    git clone https://github.com/CroatianMeteorNetwork/RMS.git && \
     apt update -y && \
     apt upgrade -y && \
     apt install --no-install-recommends -y python3-virtualenv \
     build-essential \ 
     cython3 \
+    libcairo-gobject2 \ 
+    libcairo-script-interpreter2 \
+    libcairo2-dev \
+    libcairo2 \
     ffmpeg \
     libgirepository-1.0-1 \
     libgirepository1.0-dev \
@@ -50,7 +51,10 @@ RUN chmod 755 /startup.sh && \
     curl \
     zip \
     sudo && \
-    apt clean
+    apt clean && \
+    mkdir /source && \
+    cd /source && \
+    git clone https://github.com/CroatianMeteorNetwork/RMS.git
 
 RUN ./install_rms.sh
 
