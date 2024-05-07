@@ -146,7 +146,7 @@ sudo bash install_cmn_binviewer
 #### Install Skyfit2, cameracontrol and showlivestream
 ```
 cd ~/rms_container/install_scripts
-sudo bash install_skyfit2
+sudo bash install_skyfit2 [MYUSER]
 ```
 
 After running the script the following commands are available:
