@@ -30,21 +30,79 @@ sudo apt-get upgrade -y
 sudo apt-get install podman podman-toolbox podman-compose podman-docker
 ```
 
-Now download the files from this GitHub repository into your home directory. You can do this with the command:
+Now login as the user you want to use for running the container, or do nothing if you want to run the container as your current user.
+
+Download the files from this GitHub repository into your home directory. You can do this with the command:
 ```
+cd ~
 git clone https://github.com/lancer73/rms_container
 ```
 
-The next step is to create a user under which the container should run. This is not a prerequisite, but it is a wise thing to do. Running it under a separate user will provide more stability since there is less chance of running wrong commands by accident or removing critical configuration files. When you are using Linux add that user in the following way (we are using "podman" for the user name, but this could also be something else):
+Prepare your user account to run the container:
 ```
-sudo useradd -m podman
-sudo passwd -l podman
-sudo loginctl enable-linger podman
-sudo su - podman -c "echo export XDG_RUNTIME_DIR=/run/user/`id -u` >> ~podman/.bashrc"
-sudo echo podman >> /etc/cron.allow
+sudo loginctl enable-linger `whoami`
+echo export XDG_RUNTIME_DIR=/run/user/`id -u` >> ~/.bashrc
+sudo su - "echo `whoami` >> /etc/cron.allow"
+```
+These commands are making sure that containers keep running when you logout and to enable timed jobs.
+
+Now prepare to run the container for the first time. Go into the ``rms_container`` folder and edit the ``docker-compose.yml`` file with your favorite editor.
+The file initially looks like this:
+```
+# This file is used to start the containers for all your cameras
+# Make sure all the nescessary camera config directories extist under
+# RMS_data.
+#
+# Add an instance for each camera and then do: podman-compose up -d
+# from the directory where this file is.
+#
+# REPLACE CAMERANAME with the names you received for your cameras
+#
+services:
+  [CAMERANAME1]:
+    image: docker.io/lancer73/rms
+    container_name: [CAMERANAME1]
+    hostname: [CAMERANAME1]
+    restart: on-failure:2
+    volumes:
+      - /home/[MYUSER]/rms_container/[CAMERANAME1]:/root
+    tmpfs:
+      - /tmp:size=512m
+
+#
+#  CAMERANAME2:
+#    image: docker.io/lancer73/rms
+#    container_name: [CAMERANAME2]
+#    hostname: [CAMERANAME2]
+#    restart: on-failure:2
+#    volumes:
+#      - /home/[MYUSER]/rms_container/[CAMERANAME2]:/root
+#      - proc/diskstats:/proc/diskstats:ro
+#    tmpfs:
+#      - /tmp:size=512m
 ```
 
-With the ``passwd -l`` command the podman account is locked, so there is no external access to it. The other commands are making sure that containers keep running when you logout and to enable timed jobs.
+Replace *[CAMERANAME1]* with your camera name and *[MYUSER]* with your user name. If you have multiple camera's repeat the same saction for each camera. For instance:
+```
+services:
+  xx001d:
+    image: docker.io/lancer73/rms
+    container_name: xx001d
+    hostname: xx001d
+    restart: on-failure:2
+    volumes:
+      - /home/lancer73/rms_container/xx001d:/root
+    tmpfs:
+      - /tmp:size=512m
+```
+
+Now run the container for the first time. This will setup the RMS software and create the basic configurations:
+```
+cd ~/rms_container
+podman-compose up
+```
+
+--TILL HERE--
 
 If you want to access the podman account, login with your regular user and do ``sudo su - podman`` to work under the *podman* account.
 
