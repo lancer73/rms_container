@@ -15,7 +15,6 @@ services:
     restart: on-failure:2
     volumes:
       - /home/[MYUSER]/rms_container/[CAMERANAME1]:/root
-      - /proc/diskstats:/proc/diskstats:ro
     tmpfs:
       - /tmp:size=512m
 
