@@ -97,7 +97,6 @@ cd ~/rms_container && podman-compose up -d
 If you want to stop the containers:
 ```
 cd ~/rms_container && podman-compose down
-exit
 ```
 
 If you want to see if the containers are running:
