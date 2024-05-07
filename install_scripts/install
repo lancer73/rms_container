@@ -1,13 +1,33 @@
 #!/bin/bash
 
+echo UPDATING ENVIRONMENT....
 sudo apt-get update
 sudo apt-get upgrade -y
+echo INSTALLING PODMAN ....
 sudo apt-get install -y podman podman-toolbox podman-compose podman-docker
 
+echo PREPARING USER ACCOUNT
 sudo loginctl enable-linger `whoami`
-sudo su - -c "echo `whoami` >> /etc/cron.allow"
-echo export XDG_RUNTIME_DIR=/run/user/`id -u` >> ~/.bashrc
 
-chmod u+x ~/rms_container/*_rms
+cat /etc/cron.allow | grep `whoami` >/dev/null
+if [ $? -ne 0 ]
+then
+  echo Adding user to cron.allow
+  sudo su - -c "echo `whoami` >> /etc/cron.allow"
+fi
 
+cat ~/.bashrc | grep XDG_RUNTIME_DIR >/dev/null
+if [ $? -ne 0 ]
+then
+  echo Set XDG_RUNTIME_DIR
+  echo export XDG_RUNTIME_DIR=/run/user/`id -u` >> ~/.bashrc
+fi
 
+if [ `arch` != "aarch64" ]
+then
+  echo Pre-built image not available. Building it....
+  cd ~/rms_container/podman
+  podman build . -t docker.io/lancer73/rms:latest
+else
+  echo Pre-built image available
+fi
