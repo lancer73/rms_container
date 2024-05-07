@@ -107,7 +107,7 @@ You should see a line for each station (camera).
 
 If you want to see the live output of the container for station xx001d, then do:
 ```
-podman -c "podman logs -f xx001d"
+podman logs -f xx001d
 ```
 You can close the output with ctrl-c
 
@@ -123,7 +123,7 @@ You can also start stop and update all containers with the scripts ``start_rms``
 
 Use the scripts like:
 ```
-bash ~/rms_container/update_rms"
+bash ~/rms_container/update_rms
 ```
 
 Reboot the computer and check that the RMS container starts after boot.
