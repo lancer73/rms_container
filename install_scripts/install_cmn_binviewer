@@ -1,0 +1,40 @@
+#!/bin/bash
+if [ `whoami` != "root" ]
+then
+  echo Run as root
+  exit 1
+fi
+
+# Install cmn_binviewer
+# https://github.com/CroatianMeteorNetwork/cmn_binviewer
+
+apt-get update 
+apt-get install -y dpkg-dev build-essential libjpeg-dev libtiff-dev libsdl1.2-dev  libgstreamer-plugins-base1.0-dev libnotify-dev libglut3.12 freeglut3-dev libwebkitgtk-6.0-dev libghc-gtk3-dev python3-tk python3-numpy python3-six python3-scipy python3-pil python3-imageio python3-astropy python3-pil.imagetk
+
+if [ ! -d /usr/local/src ]
+then
+  mkdir /usr/local/src
+fi
+
+# Remove current install if present
+if [ -d /usr/local/src/cmn_binviewer ]
+then
+  rm -r /usr/local/src/cmn_binviewer
+fi
+
+SAVEMYPOS=$PWD
+cd /usr/local/src
+git clone https://github.com/CroatianMeteorNetwork/cmn_binviewer.git
+cd $SAVEMYPOS
+
+# Patch CMN_binViewer.py to use the user homedir as config storage
+patch /usr/local/src/cmn_binviewer/CMN_binViewer.py < cmnbinviewer.patch
+
+cat >/usr/local/bin/cmn_binviewer <<EOF
+#!/bin/sh
+WHEREIAM=\$PWD
+cd /usr/local/src/cmn_binviewer
+python3 /usr/local/src/cmn_binviewer/CMN_binViewer.py
+cd \$WHEREIAM
+EOF
+chmod 755 /usr/local/bin/cmn_binviewer
