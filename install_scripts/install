@@ -1,36 +1,13 @@
 #!/bin/bash
 
-if [ `id -u` -ne 0 ]
-then
-  echo Run this script as root      
-  echo For example: sudo install
-  exit 0
-fi
+sudo apt-get update
+sudo apt-get upgrade -y
+sudo apt-get install -y podman podman-toolbox podman-compose podman-docker
 
-if [ $# -lt 1  ]
-then
-  echo Usage: install [username]
-  echo For example: sudo install podman
-  exit 0
-fi
+sudo loginctl enable-linger `whoami`
+sudo echo `whoami` > /etc/cron.allow
+echo "export XDG_RUNTIME_DIR=/run/user/`id -u`" >> ~/.bashrc
 
-apt-get update
-apt-get upgrade -y
-apt-get install -y podman podman-toolbox podman-compose podman-docker
-
-getent passwd $1 > /dev/null
-if [ $? -ne 0  ]
-then
-  echo Creating user $1 the Pods will run under this username
-  useradd -m $1
-  passwd -l $1
-fi
-loginctl enable-linger $1
-echo $1 > /etc/cron.allow
-su - $1 -c "export XDG_RUNTIME_DIR=/run/user/`id -u` >> ~/.bashrc"
-
-cp -r RMS_data /home/$1
-chown -R $1:$1 /home/$1/RMS_data
-chmod u+x /home/$1/RMS_data/*_rms
+chmod u+x ~/rms_container/*_rms
 
 

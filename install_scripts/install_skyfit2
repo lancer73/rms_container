@@ -17,39 +17,18 @@ fi
 apt-get update 
 apt-get install -y python3-virtualenv python3-opencv dpkg-dev build-essential libjpeg-dev libtiff-dev libsdl1.2-dev  libgstreamer-plugins-base1.0-dev libnotify-dev libglut3.12 freeglut3-dev libwebkitgtk-6.0-dev libghc-gtk3-dev python3-tk python3-numpy python3-six python3-scipy python3-pil python3-imageio python3-astropy python3-pil.imagetk
 
-SAVEMYPOS=$PWD
-if [ ! -d /usr/local/src ]
-then
-  mkdir /usr/local/src
-fi
-cd /usr/local/src
-
-# Remove existing install if present
-if [ -d /usr/local/src/RMS ]
-then
-  rm -r /usr/local/src/RMS
-fi
-
-# Install RMS and requirements
-git clone https://github.com/CroatianMeteorNetwork/RMS.git
-cd /usr/local/src/RMS
-virtualenv --system-site-packages /usr/local/src/RMS/venv
-source ./venv/bin/activate
-pip install asdf-unit-schemas
-pip install -r requirements.txt
-
-cd $SAVEMYPOS
-
 # Install scripts for all cameras
-for CAMERA in `ls /home/$1/RMS_data | grep -v baseconfig`
+for CAMERA in `find /home/$1/rms_container -name vRMS`
+CAMERANAME=`echo $CAMERA | cut -f 5 -d '/'`
 do
 # Install SkyFit2 start script
-cat >/usr/local/bin/skyfit2_$CAMERA <<EOF
+cat >/usr/local/bin/skyfit2_$CAMERANAME <<EOF
 #!/bin/bash
 WHEREIAM=\$PWD
-cd /usr/local/src/RMS
-source /usr/local/src/RMS/venv/bin/activate
-python3 -m Utils.SkyFit2 -c /home/$1/RMS_data/$CAMERA/config/.config \$@
+cd $CAMERA
+cd ../source/RMS
+source $CAMERA/bin/activate
+python3 -m Utils.SkyFit2 -c /home/$1/rms_container/$CAMERANAME/source/RMS/.config \$@
 cd \$WHEREIAM
 EOF
 chmod 755 /usr/local/bin/skyfit2_$CAMERA
@@ -57,9 +36,10 @@ chmod 755 /usr/local/bin/skyfit2_$CAMERA
 cat >/usr/local/bin/cameracontrol_$CAMERA <<EOF
 #!/bin/bash
 WHEREIAM=\$PWD
-cd /usr/local/src/RMS
-source /usr/local/src/RMS/venv/bin/activate
-python3 -m Utils.CameraControl -c /home/$1/RMS_data/$CAMERA/config/.config \$@ 
+cd $CAMERA
+cd ../source/RMS
+source $CAMERA/bin/activate
+python3 -m Utils.CameraControl -c /home/$1/rms_container/$CAMERANAME/source/RMS/.config \$@ 
 cd \$WHEREIAM
 EOF
 chmod 755 /usr/local/bin/cameracontrol_$CAMERA
@@ -67,9 +47,10 @@ chmod 755 /usr/local/bin/cameracontrol_$CAMERA
 cat >/usr/local/bin/showlivestream_$CAMERA <<EOF
 #!/bin/bash
 WHEREIAM=\$PWD
-cd /usr/local/src/RMS
-source /usr/local/src/RMS/venv/bin/activate
-python3 -m Utils.ShowLiveStream -c /home/$1/RMS_data/$CAMERA/config/.config \$@
+cd $CAMERA
+cd ../source/RMS
+source $CAMERA/bin/activate
+python3 -m Utils.ShowLiveStream -c /home/$1/rms_container/$CAMERANAME/source/RMS/.config \$@
 cd \$WHEREIAM
 EOF
 chmod 755 /usr/local/bin/showlivestream_$CAMERA

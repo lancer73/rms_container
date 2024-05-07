@@ -3,8 +3,8 @@ cd ~
 mkdir -p ~/.config/systemd/user
 crontab -l >  crontab
 
-cd ~/RMS_data
-for STATION in `ls -d * | grep -v baseconfig`
+cd ~/rms_container
+for STATION in `find . -name vRMS | cut -f 2 -d '/'`
 do
   cd ~/.config/systemd/user
   podman generate systemd --new --name $STATION -f
