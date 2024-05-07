@@ -143,7 +143,7 @@ cd ~/rms_container/install_scripts
 sudo bash install_cmn_binviewer
 ```
 
-#### Install Skyfit2, cmaeracontrol and showlivestream
+#### Install Skyfit2, cameracontrol and showlivestream
 ```
 cd ~/rms_container/install_scripts
 sudo bash install_skyfit2
