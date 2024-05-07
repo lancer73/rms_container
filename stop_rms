@@ -1,6 +1,7 @@
 #!/bin/bash
-cd ~/RMS_data
-for STATION in `ls -d * | grep -v baseconfig`
+cd ~/rms_container
+for STATION in `find . -name vRMS | cut -f 2 -d '/'`
 do
+  echo Stopping $STATION
   systemctl --user stop container-$STATION
 done
