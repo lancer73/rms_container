@@ -2,13 +2,11 @@ MAINTAINER roel@gloudemans.info
 
 FROM debian:bookworm
 ENV DEBIAN_FRONTEND=noninteractive
-ENV HOME /
+ENV HOME /root
 
 COPY startup.sh /startup.sh
-COPY install_rms.sh /install_rms.sh
 
 RUN chmod 755 /startup.sh && \
-    chmod 755 /install_rms.sh && \
     apt update -y && \
     apt upgrade -y && \
     apt install --no-install-recommends -y python3-virtualenv \
@@ -51,11 +49,6 @@ RUN chmod 755 /startup.sh && \
     curl \
     zip \
     sudo && \
-    apt clean && \
-    mkdir /source && \
-    cd /source && \
-    git clone https://github.com/CroatianMeteorNetwork/RMS.git
-
-RUN ./install_rms.sh
+    apt clean
 
 ENTRYPOINT ["/startup.sh"]
