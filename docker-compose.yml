@@ -1,0 +1,33 @@
+# This file is used to start the containers for all your cameras
+# Make sure all the nescessary camera config directories extist under
+# RMS_data.
+#
+# Add an instance for each camera and then do: podman-compose up -d
+# from the directory where this file is.
+#
+# REPLACE CAMERANAME with the names you received for your cameras
+#
+services:
+  [CAMERANAME1]:
+    image: docker.io/lancer73/rms
+    container_name: [CAMERANAME1]
+    hostname: [CAMERANAME1]
+    restart: on-failure:2
+    volumes:
+      - /home/[MYUSER]/rms_container/[CAMERANAME1]:/root
+      - /proc/diskstats:/proc/diskstats:ro
+    tmpfs:
+      - /tmp:size=512m
+
+#
+#  CAMERANAME2:
+#    image: docker.io/lancer73/rms
+#    container_name: [CAMERANAME2]
+#    hostname: [CAMERANAME2]
+#    restart: on-failure:2
+#    volumes:
+#      - /home/[MYUSER]/rms_container/[CAMERANAME2]:/root
+#      - proc/diskstats:/proc/diskstats:ro
+#    tmpfs:
+#      - /tmp:size=512m
+
