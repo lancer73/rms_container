@@ -5,7 +5,7 @@
 
 *NOTE:* The current pre-built image is only for ARM64 (Raspberry Pi 4/5). You can rebuild the image yoursef by issuing a ``podman build . -t rms:latest`` and modify the docker-compose.yml file accordingly.
 
-*NOTE:* While the container works fine on a Raspberry 5, there is something not right on the Raspberry 4. It looks like it is working, but the fram drop rate from the camera feed varies between 10 and 50%.
+*NOTE:* PERFORMANCE ISSUES HAVE BEEN SOLVED IMAGE AND TOOLS CHANGED SIGNIFICANTLY DOCUMENTATION STILL NEEDS TO BE UPDATED.
 
 ### Introduction
 
