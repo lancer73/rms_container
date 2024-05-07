@@ -1,7 +1,16 @@
 #!/bin/bash
 
 cd ~/rms_container
+[ if `arch` != "aarch64" ]
+then
+  git checkout podman
+  cd podman
+  podman build . -t docker.io/lancer73/rms:latest
+  cd ~/rms_container
+else
+  podman-compose pull
+fi
+  
 ~/rms_container/stop_rms
-podman-compose pull
 ~/rms_container/start_rms
 
