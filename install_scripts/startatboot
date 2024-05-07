@@ -6,16 +6,22 @@ crontab -l >  crontab
 cd ~/rms_container
 for STATION in `find . -name vRMS | cut -f 2 -d '/'`
 do
-  cd ~/.config/systemd/user
-  podman generate systemd --new --name $STATION -f
-  systemctl --user daemon-reload
-  systemctl --user enable container-$STATION
+  if [ ! -f container-$STATION ]
+  then
+    cd ~/.config/systemd/user
+    podman generate systemd --new --name $STATION -f
+    systemctl --user daemon-reload
+    systemctl --user enable container-$STATION
 
 
-  # Add restart to cron
-  echo 22 12 \* \* \* podman stop $STATION >> ~/crontab
+    # Add restart to cron
+    echo 22 12 \* \* \* podman stop $STATION >> ~/crontab
+  fi
 done
 
 cd ~
-crontab crontab
-rm crontab
+if [ -f crontab ]
+then
+  crontab crontab
+  rm crontab
+fi
