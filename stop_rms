@@ -1,0 +1,6 @@
+#!/bin/bash
+cd ~/RMS_data
+for STATION in `ls -d * | grep -v baseconfig`
+do
+  systemctl --user stop container-$STATION
+done

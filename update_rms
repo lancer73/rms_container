@@ -1,0 +1,7 @@
+#!/bin/bash
+
+cd ~/RMS_data/baseconfig
+~/RMS_data/stop_rms
+podman-compose pull
+~/RMS_data/start_rms
+
