@@ -83,9 +83,13 @@ Each camera needs it own configuration files. These are all created in the ``~/r
 cd ~/rms_container && podman-compose up
 ```
 
-The image will download and setup RMS. After first setup the image will quit so you can edit your configuration files. The file you will need to edit is ``~/rms_container/[CAMERANAME1]/source/RMS/.config`` and you will need to send ``~/rms_container/[CAMERANAME1]/.ssh/rd_rsa`` to Denis Vida or put your existing ssh key in that place. If you have an existing ``platepar_cmn2010.cal`` file and mask, you can put it in ``~/rms_container/[CAMERANAME1]/source/RMS``, or you can observe the first night and then create them (see Global Meteor Network wiki; https://globalmeteornetwork.org//wiki/index.php?title=Main_Page#Using_SkyFit2_to_perform_astrometric_and_photometric_calibration_+_Manually_reducing_observations_of_fireballs_and_computing_their_trajectories:)
+The image will download and setup RMS. After first setup the image will quit so you can edit your configuration files. 
 
-When reading the Global Meteor Network wiki (https://globalmeteornetwork.org/wiki) you can follow all instructions there, but note that our directory paths are slightly different. Insert ``/rms_container/[CAMERANAME1]`` after the home directory of all paths. For instance ``~/source/RMS`` and ``/home/rms/vRMS/bin`` will become ``~/rms_container/[CAMERANAME1]/source/RMS`` and ``/home/rms/rms_container/[CAMERANAME1]/vRMS/bin``. For additional cameras substitute the proper cameraname.
+The file you will need to edit is ``~/rms_container/[CAMERANAME1]/source/RMS/.config`` and you will need to send ``~/rms_container/[CAMERANAME1]/.ssh/id_rsa`` to Denis Vida or put your existing ssh key in that place. 
+
+If you have an existing ``platepar_cmn2010.cal`` file and mask, you can put it in ``~/rms_container/[CAMERANAME1]/source/RMS``, or you can observe the first night and then create them (see Global Meteor Network wiki; https://globalmeteornetwork.org//wiki/index.php?title=Main_Page#Using_SkyFit2_to_perform_astrometric_and_photometric_calibration_+_Manually_reducing_observations_of_fireballs_and_computing_their_trajectories:)
+
+When reading the Global Meteor Network wiki (https://globalmeteornetwork.org/wiki) you can follow all instructions there, but note that our directory paths are slightly different. Insert ``/rms_container/[CAMERANAME1]`` after the home directory of all paths. For instance ``~/source/RMS`` and ``/home/rms/vRMS/bin`` will become ``~/rms_container/[CAMERANAME1]/source/RMS`` and ``/home/rms/rms_container/[CAMERANAME1]/vRMS/bin``. For additional cameras substitute the proper cameraname in the path.
 
 
 ### Running the containers
